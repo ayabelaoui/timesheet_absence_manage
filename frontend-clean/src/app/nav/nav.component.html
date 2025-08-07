@@ -1,0 +1,10 @@
+<nav>
+    <div class="left-title">Timesheet & Absences</div>
+    <div class="right-buttons">
+        <button *ngIf="role === 'EMPLOYE'" routerLink="/timesheet">Feuille de temps</button>
+        <button *ngIf="role === 'EMPLOYE'" routerLink="/conges">Mes congés</button>
+        <button *ngIf="role === 'RH'" routerLink="/validation-conges">Valider congés</button>
+        <button *ngIf="role === 'ADMIN'" routerLink="/dashboard-admin">Dashboard admin</button>
+        <button (click)="logout()">Logout</button>
+    </div>
+</nav>

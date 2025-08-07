@@ -1,0 +1,28 @@
+<div class="absence-container">
+    <h2>Demandes d'Absence</h2>
+
+    <form (ngSubmit)="submitAbsence()">
+        <label>Type d'absence:</label>
+        <select [(ngModel)]="absence.type" name="type" required>
+            <option value="">Sélectionner</option>
+            <option value="Congé payé">Congé payé</option>
+            <option value="Maladie">Maladie</option>
+            <option value="Personnel">Personnel</option>
+        </select>
+
+        <label>Début:</label>
+        <input type="date" [(ngModel)]="absence.startDate" name="startDate" required />
+
+        <label>Fin:</label>
+        <input type="date" [(ngModel)]="absence.endDate" name="endDate" required />
+
+        <button type="submit">Demander</button>
+    </form>
+
+    <h3>Historique des Absences</h3>
+    <ul>
+        <li *ngFor="let abs of absences">
+            {{ abs.type }} du {{ abs.startDate }} au {{ abs.endDate }}
+        </li>
+    </ul>
+</div>

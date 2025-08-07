@@ -1,0 +1,67 @@
+<div class="admin-container">
+    <!-- ... (en-tête et stats inchangés) ... -->
+
+    <section class="timesheets-list">
+        <div class="header-actions">
+            <h2>Feuilles de temps</h2>
+            <button class="btn-add" (click)="ajouterFeuille()">+ Ajouter</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employé</th>
+                        <th>Période</th>
+                        <th>Heures</th>
+                        <th>Statut</th>
+                        <th>Approbateur</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let feuille of feuillesDeTemps" [class.editing]="feuille.editable">
+                        <td>
+                            <span *ngIf="!feuille.editable">{{ feuille.employe }}</span>
+                            <input *ngIf="feuille.editable" [(ngModel)]="feuilleEdit.employe">
+                        </td>
+                        <td>
+                            <span *ngIf="!feuille.editable">{{ feuille.periode }}</span>
+                            <input *ngIf="feuille.editable" [(ngModel)]="feuilleEdit.periode">
+                        </td>
+                        <td>
+                            <span *ngIf="!feuille.editable">{{ feuille.heures }}h</span>
+                            <input *ngIf="feuille.editable" type="number" [(ngModel)]="feuilleEdit.heures">
+                        </td>
+                        <td [class.status-pending]="feuille.statut === 'En attente'"
+                            [class.status-approved]="feuille.statut === 'Approuvé'"
+                            [class.status-rejected]="feuille.statut === 'Rejeté'">
+                            <span *ngIf="!feuille.editable">{{ feuille.statut }}</span>
+                            <select *ngIf="feuille.editable" [(ngModel)]="feuilleEdit.statut">
+                                <option value="Brouillon">Brouillon</option>
+                                <option value="En attente">En attente</option>
+                                <option value="Approuvé">Approuvé</option>
+                                <option value="Rejeté">Rejeté</option>
+                            </select>
+                        </td>
+                        <td>{{ feuille.approbateur || '-' }}</td>
+                        <td>{{ feuille.dateSoumission | date:'dd/MM/yyyy' }}</td>
+                        <td class="actions">
+                            <div *ngIf="!feuille.editable; else editMode">
+                                <button class="btn-edit" (click)="activerEdition(feuille)">✏️</button>
+                                <button class="btn-view" (click)="voirFeuille(feuille)">👁️</button>
+                            </div>
+                            <ng-template #editMode>
+                                <button class="btn-save" (click)="sauvegarderModification(feuille)">💾</button>
+                                <button class="btn-cancel" (click)="annulerModification(feuille)">❌</button>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Modal (inchangé) -->
+</div>

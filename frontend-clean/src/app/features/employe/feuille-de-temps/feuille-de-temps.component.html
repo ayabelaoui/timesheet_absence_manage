@@ -1,0 +1,45 @@
+<div class="feuille-container">
+    <h1>
+        Feuille de temps - <strong>{{ moisActuel | uppercase }} {{ anneeActuelle }}</strong>
+    </h1>
+
+    <div class="navigation">
+        <button (click)="moisPrecedent()">&lt; MOIS PRÉCÉDENT</button>
+        <button (click)="moisSuivant()">MOIS SUIVANT &gt;</button>
+    </div>
+
+    <div class="actions">
+        <button mat-raised-button color="primary" (click)="enregistrerBrouillon()">
+            Enregistrer brouillon
+        </button>
+        <button mat-raised-button color="accent" (click)="soumettreFeuille()">
+            Soumettre feuille
+        </button>
+
+    </div>
+
+    <table class="calendrier">
+        <thead>
+            <tr>
+                <th *ngFor="let jour of joursSemaine" [class.jour-ouvrable]="joursSemaine.indexOf(jour) < 5">
+                    {{ jour }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let semaine of semaines">
+                <td *ngFor="let jour of semaine" [class.ferie]="jour?.estFerie" [class.vide]="!jour"
+                    [class.aujourdhui]="jour?.estAujourdhui">
+                    <div *ngIf="jour" class="jour-cellule">
+                        <div class="numero-jour">{{ jour.jour }}</div>
+                        <div class="saisie-heures">
+                            <input type="number" [(ngModel)]="jour.heures" [disabled]="jour.estFerie" min="0" max="24"
+                                placeholder="0">
+                            <span class="unite-h">h</span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

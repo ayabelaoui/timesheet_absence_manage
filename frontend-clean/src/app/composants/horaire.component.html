@@ -1,0 +1,37 @@
+<div class="calendrier-container">
+
+    <h2>Feuille de temps - {{ currentDate | date: 'MMMM yyyy' }}</h2>
+
+    <table class="calendrier">
+        <thead>
+            <tr>
+                <th *ngFor="let jour of joursSemaine">{{ jour }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let semaine of joursMois">
+                <td *ngFor="let jour of semaine" class="case-jour">
+                    <div *ngIf="jour">
+                        <div class="date-label">{{ jour.jour }}</div>
+                        <input type="number" min="0" max="24" step="0.25" [(ngModel)]="jour.heures"
+                            (ngModelChange)="calculerTotal()" [disabled]="feuilleSoumise" placeholder="h" />
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p class="total-heures">Total heures : {{ totalHeures }}</p>
+
+    <!-- Boutons -->
+    <div *ngIf="isEmployee && !feuilleSoumise">
+        <button (click)="saveDraft()">💾 Enregistrer le brouillon</button>
+        <button (click)="submitFeuille()">📤 Soumettre</button>
+    </div>
+
+    <div *ngIf="feuilleSoumise" class="alert alert-info">
+        Cette feuille est déjà soumise.
+    </div>
+
+    <button class="pdf-btn" (click)="exportPDF()">🖨️ Exporter PDF</button>
+</div>

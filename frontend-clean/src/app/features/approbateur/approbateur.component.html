@@ -1,0 +1,162 @@
+<div class="approbateur-container">
+    <h1 class="title">Gestion des Feuilles de Temps</h1>
+
+    <div class="navigation">
+        <button [class.active]="currentView === 'creation'" (click)="changerVue('creation')">Création</button>
+        <button [class.active]="currentView === 'en-attente'" (click)="changerVue('en-attente')">En attente
+            ({{feuillesEnAttente.length}})</button>
+        <button [class.active]="currentView === 'approuvees'" (click)="changerVue('approuvees')">Approuvées
+            ({{feuillesApprouvees.length}})</button>
+        <button [class.active]="currentView === 'rejetees'" (click)="changerVue('rejetees')">Rejetées
+            ({{feuillesRejetees.length}})</button>
+    </div>
+
+    <!-- Vue Création -->
+    <div class="formulaire-ajout" *ngIf="currentView === 'creation'">
+        <h2>Timesheets 🕙</h2>
+
+        <div class="form-group">
+            <label>Nom de l'employé:</label>
+            <input type="text" [(ngModel)]="nouvelleFeuille.employe" placeholder="Votre nom">
+        </div>
+
+        <div class="form-group">
+            <label>Période travaillée:</label>
+            <div class="periode-input">
+                <input type="text" [(ngModel)]="nouvelleFeuille.periode" placeholder="Sélectionnez une période"
+                    readonly>
+                <button class="calendar-btn" (click)="toggleCalendar()">📅</button>
+            </div>
+
+            <div class="calendar" *ngIf="showCalendar">
+                <div class="calendar-header">
+                    <button (click)="previousMonth()">◀</button>
+                    <span>{{ getMonthName(currentMonth) }} {{ currentYear }}</span>
+                    <button (click)="nextMonth()">▶</button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="day-header" *ngFor="let day of ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']">{{ day
+                        }}</div>
+                    <div *ngFor="let day of generateCalendarDays()" class="day"
+                        [class.selected-start]="isSelectedStart(day)" [class.selected-end]="isSelectedEnd(day)"
+                        [class.in-range]="isInRange(day)" (click)="selectDate(day)">
+                        {{ day.getDate() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Heures travaillées:</label>
+            <input type="number" [(ngModel)]="nouvelleFeuille.heures" min="0" step="0.5">
+        </div>
+
+        <button class="btn-ajouter" (click)="ajouterFeuille()">Soumettre</button>
+    </div>
+
+    <!-- Vue En Attente -->
+    <div class="pending-list" *ngIf="currentView === 'en-attente' && feuillesEnAttente.length > 0">
+        <table>
+            <thead>
+                <tr>
+                    <th>Employé</th>
+                    <th>Période</th>
+                    <th>Heures</th>
+                    <th>Date Soumission</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let feuille of feuillesEnAttente">
+                    <td>{{ feuille.employe }}</td>
+                    <td>{{ feuille.periode }}</td>
+                    <td>{{ feuille.heures }}h</td>
+                    <td>{{ feuille.dateSoumission | date:'dd/MM/yyyy' }}</td>
+                    <td class="actions">
+                        <button class="btn-voir" (click)="voirFeuille(feuille)">Voir</button>
+                        <button class="btn-approuver" (click)="approuver(feuille)">Approuver</button>
+                        <button class="btn-rejeter" (click)="ouvrirRejet(feuille)">Rejeter</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Vue Approuvées -->
+    <div class="approved-list" *ngIf="currentView === 'approuvees' && feuillesApprouvees.length > 0">
+        <table>
+            <thead>
+                <tr>
+                    <th>Employé</th>
+                    <th>Période</th>
+                    <th>Heures</th>
+                    <th>Date Approbation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let feuille of feuillesApprouvees">
+                    <td>{{ feuille.employe }}</td>
+                    <td>{{ feuille.periode }}</td>
+                    <td>{{ feuille.heures }}h</td>
+                    <td>{{ feuille.dateSoumission | date:'dd/MM/yyyy' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Vue Rejetées -->
+    <div class="rejected-list" *ngIf="currentView === 'rejetees' && feuillesRejetees.length > 0">
+        <table>
+            <thead>
+                <tr>
+                    <th>Employé</th>
+                    <th>Période</th>
+                    <th>Heures</th>
+                    <th>Date Rejet</th>
+                    <th>Commentaire</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let feuille of feuillesRejetees">
+                    <td>{{ feuille.employe }}</td>
+                    <td>{{ feuille.periode }}</td>
+                    <td>{{ feuille.heures }}h</td>
+                    <td>{{ feuille.dateSoumission | date:'dd/MM/yyyy' }}</td>
+                    <td>{{ feuille.commentaireRejet }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" *ngIf="feuilleSelectionnee">
+        <div class="modal-content">
+            <h2 *ngIf="!rejetMode">Détails de la feuille</h2>
+            <h2 *ngIf="rejetMode">Rejet de la feuille</h2>
+
+            <div *ngIf="!rejetMode">
+                <p><strong>Employé:</strong> {{ feuilleSelectionnee.employe }}</p>
+                <p><strong>Période:</strong> {{ feuilleSelectionnee.periode }}</p>
+                <p><strong>Heures:</strong> {{ feuilleSelectionnee.heures }}h</p>
+                <p><strong>Date Soumission:</strong> {{ feuilleSelectionnee.dateSoumission | date:'dd/MM/yyyy' }}</p>
+
+                <div class="modal-actions">
+                    <button class="btn-approuver" (click)="approuver(feuilleSelectionnee)">Approuver</button>
+                    <button class="btn-rejeter" (click)="ouvrirRejet(feuilleSelectionnee)">Rejeter</button>
+                    <button class="btn-fermer" (click)="fermerModal()">Fermer</button>
+                </div>
+            </div>
+
+            <div *ngIf="rejetMode">
+                <p>Vous êtes sur le point de rejeter la feuille de {{ feuilleSelectionnee.employe }}</p>
+                <textarea [(ngModel)]="commentaireRejet"
+                    placeholder="Veuillez indiquer la raison du rejet..."></textarea>
+
+                <div class="modal-actions">
+                    <button class="btn-confirmer" (click)="confirmerRejet()">Confirmer Rejet</button>
+                    <button class="btn-annuler" (click)="annulerRejet()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

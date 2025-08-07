@@ -1,0 +1,147 @@
+.feuiile-container {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+h1 strong {
+    color: #e74c3c;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.navigation button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.navigation button:hover {
+    background: #2980b9;
+}
+
+.calendrier {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+}
+
+.calendrier th {
+    background-color: #34495e;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #2c3e50;
+    font-weight: bold;
+}
+
+.calendrier th.jour-ouvrable {
+    background-color: #2c3e50;
+}
+
+.calendrier td {
+    border: 1px solid #ddd;
+    padding: 0;
+    height: 70px;
+    vertical-align: top;
+    position: relative;
+}
+
+.calendrier td.vide {
+    background-color: #f9f9f9;
+}
+
+.calendrier td.ferie {
+    background-color: #f5f5f5;
+}
+
+.calendrier td.aujourdhui {
+    background-color: #e3f2fd;
+}
+
+.jour-cellule {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px;
+}
+
+.numero-jour {
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 2px 5px;
+}
+
+.saisie-heures {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+.saisie-heures input {
+    width: 40px;
+    padding: 6px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.saisie-heures input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+.unite-h {
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+.bouton-sauvegarde {
+    display: block;
+    width: 200px;
+    margin: 20px auto 0;
+    padding: 12px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 1em;
+}
+
+.bouton-sauvegarde:hover {
+    background-color: #27ae60;
+}
+
+/* Styles pour les jours fériés */
+.calendrier td.ferie .numero-jour {
+    color: #95a5a6;
+}
+
+.calendrier td.ferie .saisie-heures input {
+    color: #95a5a6;
+}
