@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
+interface Role {
+  id: number;
+  name: string;
+}
 interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: 'ADMIN' | 'APPROBATEUR' | 'EMPLOYE'; // Doit correspondre à votre backend
+  roles: Role[];
 }
 
 interface AuthResponse {
@@ -24,11 +28,16 @@ interface AuthResponse {
 export class AuthService {
   private apiUrl = `${environment.apiURL}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-
+ private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  //isAuthenticated$: Observable<boolean> = this.isAuthenticatedSubject.asObservable();
   public currentUser$ = this.currentUserSubject.asObservable();
-  isAuthenticated$: any;
 
   constructor(private http: HttpClient, private router: Router) { }
+
+  // In auth.service.ts
+get isAuthenticated$(): Observable<boolean> {
+  return this.isAuthenticatedSubject?.asObservable() ?? of(false);
+}
 
   // Inscription
   register(userData: {
@@ -57,7 +66,8 @@ export class AuthService {
     }).pipe(
       tap(response => {
         this.handleAuthentication(response);
-        this.redirectBasedOnRole(response.user.role);
+        
+        this.redirectBasedOnRole(response.user);
       }),
       map(response => response.user),
       catchError(error => {
@@ -69,25 +79,37 @@ export class AuthService {
 
   private handleAuthentication(response: AuthResponse): void {
     localStorage.setItem('auth_token', response.token);
-    localStorage.setItem('currentUser', JSON.stringify(response.user));
+    let user = JSON.stringify(response.user);
+    console.log("user:",user);
+    localStorage.setItem('currentUser', user);
     this.currentUserSubject.next(response.user);
+    
   }
 
-  private redirectBasedOnRole(role: string): void {
-    switch (role) {
-      case 'ADMIN':
-        this.router.navigate(['/admin']);
-        break;
-      case 'APPROBATEUR':
-        this.router.navigate(['/approbateur']);
-        break;
-      case 'EMPLOYE':
-        this.router.navigate(['/employe']);
-        break;
-      default:
-        this.router.navigate(['/']);
-    }
+  private redirectBasedOnRole(user: any): void {
+  if (!user || !user.roles || !Array.isArray(user.roles)) {
+    this.router.navigate(['/']);
+    return;
   }
+
+  // Extract role names (removing 'ROLE_' prefix if present)
+  const roles = user.roles.map((role: Role) => 
+    role.name.replace(/^ROLE_/, '').toUpperCase()
+  );
+
+  console.log("User roles:", roles);
+
+  // Check for specific roles in order of priority
+  if (roles.includes('ADMIN')) {
+    this.router.navigate(['/admin']);
+  } else if (roles.includes('APPROBATEUR')) {
+    this.router.navigate(['/approbateur']);
+  } else if (roles.includes('EMPLOYE')) {
+    this.router.navigate(['/employe']);
+  } else {
+    this.router.navigate(['/']);
+  }
+}
 
   logout(): void {
     localStorage.removeItem('auth_token');

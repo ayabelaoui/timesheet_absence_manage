@@ -50,8 +50,7 @@ export class RegisterComponent {
                 }).subscribe({
                     next: (loginResponse) => {
                         this.isLoading = false;
-                        const role = loginResponse.role || response.role;
-                        this.redirectBasedOnRole(role);
+                        this.redirectBasedOnRole(response.user);
                     },
                     error: () => {
                         this.isLoading = false;
