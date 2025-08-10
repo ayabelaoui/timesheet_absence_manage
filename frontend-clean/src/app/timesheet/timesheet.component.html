@@ -80,9 +80,9 @@
 </div>
 <!--<div *ngFor="let week of weeks">
     <div *ngFor="let date of week.dates" class="day-cell">
-        <input *ngIf="date !== null" type="number" [disabled]="userRole !== 'USER'" [(ngModel)]="hours[date]"
-            (ngModelChange)="userRole === 'USER' ? saveHours(date) : null" min="0" max="24"
-            [ngStyle]="{ 'background-color': userRole !== 'USER' ? '#e0e0e0' : 'white' }" />
+        <input *ngIf="date !== null" type="number" [disabled]="userRole !== 'EMPLOYE'" [(ngModel)]="hours[date]"
+            (ngModelChange)="userRole === 'EMPLOYE' ? saveHours(date) : null" min="0" max="24"
+            [ngStyle]="{ 'background-color': userRole !== 'EMPLOYE' ? '#e0e0e0' : 'white' }" />
     </div>
 </div>-->
 <div *ngIf="isApprobateur && !isTimesheetStatusApproved" class="remarks-section">

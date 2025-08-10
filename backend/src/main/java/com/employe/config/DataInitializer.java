@@ -27,11 +27,16 @@ public class DataInitializer implements CommandLineRunner {
 	
     @Override
     public void run(String... args) throws Exception {
+        
          // Création des rôles s'ils n'existent pas
-                if (roleRepository.findByName("ROLE_USER").isEmpty()) {
-                    roleRepository.save(new Role(null, "ROLE_USER"));
+                if (roleRepository.findByName("ROLE_EMPLOYE").isEmpty()) {
+                    System.out.println("insert ROLE_EMPLOYE ");
+                    roleRepository.save(new Role(null, "ROLE_EMPLOYE"));
                 }
-                Role userRole = roleRepository.findByName("ROLE_USER").get();
+
+                Role userRole = roleRepository.findByName("ROLE_EMPLOYE").get();
+
+
                 if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
                     roleRepository.save(new Role(null, "ROLE_ADMIN"));
                 }

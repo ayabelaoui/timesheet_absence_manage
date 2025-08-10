@@ -66,7 +66,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         this.currentUserSubject.next(response.user);
-      this.isAuthenticatedSubject.next(true);
+        this.isAuthenticatedSubject.next(true);
         this.handleAuthentication(response);
         
         this.redirectBasedOnRole(response.user);
@@ -106,7 +106,7 @@ export class AuthService {
     this.router.navigate(['/admin']);
   } else if (roles.includes('APPROBATEUR')) {
     this.router.navigate(['/approbateur']);
-  } else if (roles.includes('USER')) {
+  } else if (roles.includes('EMPLOYE')) {
     this.router.navigate(['/timesheet']);
   } else {
     this.router.navigate(['/']);

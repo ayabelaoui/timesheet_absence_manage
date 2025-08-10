@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            Role defaultRole = roleRepository.findByName("ROLE_USER")
+            Role defaultRole = roleRepository.findByName("ROLE_EMPLOYE")
                     .orElseThrow(() -> new RuntimeException("Default role not found"));
             Set<Role> roles = new HashSet<>();
             roles.add(defaultRole);

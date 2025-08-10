@@ -41,7 +41,7 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
   drafts: any[] = [];
 
   currentUser = { name: '', hireDate: '', role: '' };
-  userRole: string = 'ROLE_USER';
+  userRole: string = 'ROLE_EMPLOYE';
   holidays: Date[] = [];
   year = 2025;
   countryCode = 'MA'; // Morocco
@@ -249,7 +249,7 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
     return this.currentUser.role === 'ROLE_APPROBATEUR';
   }
   get isUser(): boolean {
-    return this.currentUser.role === 'ROLE_USER';
+    return this.currentUser.role === 'ROLE_EMPLOYE';
   }
 
   previousMonth() {
@@ -275,8 +275,8 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
   }
 
   Role() {
-    // Example: Toggle between 'ROLE_EMPLOYE' and 'ROLE_USER'
-    this.currentUser.role = this.currentUser.role === 'ROLE_EMPLOYE' ? 'ROLE_EMPLOYE':'ROLE_USER';
+    // Example: Toggle between 'ROLE_EMPLOYE' and 'ROLE_EMPLOYE'
+    this.currentUser.role = this.currentUser.role === 'ROLE_EMPLOYE' ? 'ROLE_EMPLOYE':'ROLE_EMPLOYE';
     localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
   }
 

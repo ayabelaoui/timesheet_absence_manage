@@ -56,7 +56,7 @@ public class AuthenticationService {
                         }
 
                         // Attribution du rôle
-                        Role userRole = roleRepository.findByName("ROLE_USER")
+                        Role userRole = roleRepository.findByName("ROLE_EMPLOYE")
                                         .orElseThrow(() -> new RuntimeException("Role USER non trouvé"));
 
                         // Création de l'utilisateur
@@ -78,7 +78,7 @@ public class AuthenticationService {
                         return ResponseEntity.ok().body(Map.of(
                                         "token", jwtToken,
                                         "message", "Inscription réussie",
-                                        "role", "ROLE_USER" // Par défaut
+                                        "role", "ROLE_EMPLOYE" // Par défaut
                         ));
 
                 } catch (Exception e) {
@@ -132,7 +132,7 @@ public class AuthenticationService {
                 String role = user.getRoles().stream()
                                 .findFirst()
                                 .map(Role::getName)
-                                .orElse("ROLE_USER");
+                                .orElse("ROLE_EMPLOYE");
 
                 return new AuthResponse(jwtToken, role);
         }
