@@ -13,14 +13,14 @@
   <div class="title">{{title}}</div>
   <nav class="nav">
     <!-- Liens pour utilisateurs non connectés -->
-    <ng-container *ngIf="!isLoggedIn">
+    <ng-container *ngIf="!isLoggedIn || !currentUser">
       <a routerLink="/home" routerLinkActive="active">Home</a>
       <a routerLink="/register" routerLinkActive="active">Register</a>
       <a routerLink="/login" routerLinkActive="active">Login</a>
     </ng-container>
 
     <!-- Liens pour utilisateurs connectés -->
-    <ng-container *ngIf="isLoggedIn">
+    <ng-container *ngIf="isLoggedIn || currentUser">
       <a routerLink="/timesheet" routerLinkActive="active">TimeSheet</a>
       <!--<a routerLink="/profile" routerLinkActive="active">Profile</a>-->
       <a routerLink="/horaire">Horaire</a>

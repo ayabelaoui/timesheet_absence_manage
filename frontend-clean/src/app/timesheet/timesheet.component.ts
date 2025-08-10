@@ -57,7 +57,7 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
     this.holidayService.getHolidays(this.year, this.countryCode).subscribe({
       next: (holidays) => {
         this.holidays = holidays;
-        console.log('holidays', holidays);
+       // console.log('holidays', holidays);
       },
       error: (err) => {
         console.error('Failed to load holidays', err);
@@ -89,7 +89,7 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
     if (userData) {
       this.currentUser = JSON.parse(userData);
     }
-    console.log("hireDate:: ", this.currentUser.hireDate);
+    //console.log("hireDate:: ", this.currentUser.hireDate);
   }
 
   loadHoursFromLocalStorage() {
@@ -167,7 +167,7 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
     if (day <= 0 || day > this.months[this.selectedMonth].days) return false;
     const date = new Date(this.currentYear, this.selectedMonth, day);
     const dayDate = DateUtils.toDateString(date);
-    console.log("isValidDate::", !this.isFutureDay(dayDate), day, dayDate, this.isFutureDay(dayDate));
+    //console.log("isValidDate::", !this.isFutureDay(dayDate), day, dayDate, this.isFutureDay(dayDate));
     return dayDate !== null
       && !DateUtils.isBefore(date, DateUtils.toDate(this.currentUser.hireDate))
       && !this.isFutureDay(dayDate)
@@ -191,7 +191,7 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
 
 
   isToBeDisabled(day: number): boolean {
-    console.log("isToBeDisabled::", this.currentUser.role, !this.isUser, !this.isValidDate(day), this.timesheetStatus !== 'Draft', !this.isCurrentMonth);
+    //console.log("isToBeDisabled::", this.currentUser.role, !this.isUser, !this.isValidDate(day), this.timesheetStatus !== 'Draft', !this.isCurrentMonth);
     return !this.isUser || !this.isValidDate(day) || this.timesheetStatus !== 'Draft' || !this.isCurrentMonth;
   }
 

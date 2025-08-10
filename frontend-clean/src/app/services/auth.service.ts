@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, map, tap } from 'rxjs/operators';
+//import { JwtService } from './jwt.service'; // Optional: for JWT handling
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
@@ -27,17 +28,16 @@ interface AuthResponse {
 })
 export class AuthService {
   private apiUrl = `${environment.apiURL}/auth`;
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
- private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  //isAuthenticated$: Observable<boolean> = this.isAuthenticatedSubject.asObservable();
+  private currentUserSubject = new BehaviorSubject<any>(null);
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  
   public currentUser$ = this.currentUserSubject.asObservable();
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable().pipe(
+    distinctUntilChanged()
+  );
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  // In auth.service.ts
-get isAuthenticated$(): Observable<boolean> {
-  return this.isAuthenticatedSubject?.asObservable() ?? of(false);
-}
 
   // Inscription
   register(userData: {
@@ -65,6 +65,8 @@ get isAuthenticated$(): Observable<boolean> {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
       tap(response => {
+        this.currentUserSubject.next(response.user);
+      this.isAuthenticatedSubject.next(true);
         this.handleAuthentication(response);
         
         this.redirectBasedOnRole(response.user);
@@ -104,8 +106,8 @@ get isAuthenticated$(): Observable<boolean> {
     this.router.navigate(['/admin']);
   } else if (roles.includes('APPROBATEUR')) {
     this.router.navigate(['/approbateur']);
-  } else if (roles.includes('EMPLOYE')) {
-    this.router.navigate(['/employe']);
+  } else if (roles.includes('USER')) {
+    this.router.navigate(['/timesheet']);
   } else {
     this.router.navigate(['/']);
   }

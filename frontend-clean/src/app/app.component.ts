@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ChangeDetectorRef  } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -12,7 +12,8 @@ import { Subscription } from 'rxjs';
   standalone: true,
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet]
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  changeDetection: ChangeDetectionStrategy.Default 
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Timesheet & Absence Manager';
@@ -22,21 +23,54 @@ export class AppComponent implements OnInit, OnDestroy {
   errorMessage = '';
   isLoggedIn = false;
   currentUser: any = null;
-  private authSub!: Subscription;
+  authSub!: Subscription;
   currentYear = new Date().getFullYear();
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) private document: Document,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
+    this.subscribeToAuthStatus();
     if (isPlatformBrowser(this.platformId)) {
       this.initApp();
     }
   }
+
+  private subscribeToAuthStatus() {
+    if (!this.authService.isAuthenticated$) {
+      console.error('isAuthenticated$ is not defined in AuthService');
+      return;
+    }
+
+     this.authSub = this.authService.isAuthenticated$.subscribe({
+      next: (authenticated: boolean) => {
+        this.isLoggedIn = authenticated;
+        this.currentUser = this.authService.getCurrentUser();
+        this.cdRef.detectChanges();
+        
+        this.cdRef.markForCheck(); // Better for OnPush strategy
+          console.log('user Updated:', { 
+            isLoggedIn: this.isLoggedIn, 
+            user: this.currentUser 
+           });
+      },
+      error: (err: any) => {
+        this.handleError('Failed to check authentication status');
+      }
+    });
+  }
+
+ private unsubscribeFromAuth() {
+    if (this.authSub) {
+      this.authSub.unsubscribe();
+    }
+  }
+
   // Méthode de débogage optionnelle
   simulateError() {
     this.isError = true;
@@ -67,9 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.authSub) {
-      this.authSub.unsubscribe();
-    }
+    this.unsubscribeFromAuth(); 
   }
 
   logout() {
